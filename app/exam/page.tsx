@@ -61,7 +61,7 @@ export default function ExamPage() {
     setSubmitted(true)
   }
 
-  const score = answers.reduce((acc, ans, idx) => {
+  const score = answers.reduce((acc: number, ans, idx) => {
     if (ans === null) return acc
     return ans === questions[idx].answer ? acc + 1 : acc
   }, 0)

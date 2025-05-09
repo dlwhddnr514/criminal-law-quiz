@@ -4,23 +4,22 @@ import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { allQuestions, Question } from '@/lib/data/questions'
+import { wrongAnswers } from '@/lib/state'
 import { useRouter } from 'next/navigation'
 
-let wrongAnswers: any[] = []
-
-const getRandomPracticeQuestions = (): Question[] => {
+const getPracticeQuestions = (): Question[] => {
   const shuffled = allQuestions.sort(() => 0.5 - Math.random())
   return shuffled.slice(0, 10)
 }
 
-const practiceQuestions = getRandomPracticeQuestions()
+const practiceQuestions = getPracticeQuestions()
 
 export default function PracticePage() {
   const [current, setCurrent] = useState(0)
   const [score, setScore] = useState(0)
-  const [showScore, setShowScore] = useState(false)
   const [showExplanation, setShowExplanation] = useState(false)
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
+  const [showScore, setShowScore] = useState(false)
   const router = useRouter()
 
   const handleAnswer = (index: number) => {
@@ -41,23 +40,13 @@ export default function PracticePage() {
   }
 
   const handleNext = () => {
-    const next = current + 1
-    if (next < practiceQuestions.length) {
-      setCurrent(next)
+    if (current < practiceQuestions.length - 1) {
+      setCurrent(current + 1)
       setShowExplanation(false)
       setSelectedAnswer(null)
     } else {
       setShowScore(true)
     }
-  }
-
-  const resetQuiz = () => {
-    setScore(0)
-    setCurrent(0)
-    setShowScore(false)
-    setShowExplanation(false)
-    setSelectedAnswer(null)
-    wrongAnswers = []
   }
 
   return (
@@ -70,27 +59,26 @@ export default function PracticePage() {
           <CardContent>
             <h2 className="text-2xl font-bold mb-4">퀴즈 완료!</h2>
             <p className="mb-4">점수: {score} / {practiceQuestions.length}</p>
-            <Button onClick={resetQuiz}>다시 시작하기</Button>
-            <Button onClick={() => router.push('/wrong-note')} className="mt-2">오답 노트</Button>
+            <Button onClick={() => router.push('/wrong-note')}>오답 노트</Button>
           </CardContent>
         ) : (
           <CardContent>
             <h2 className="text-xl font-bold mb-4">{practiceQuestions[current].question}</h2>
             <div className="space-y-2">
-              {practiceQuestions[current].options.map((option, index) => (
+              {practiceQuestions[current].options.map((opt, idx) => (
                 <Button
-                  key={index}
-                  onClick={() => handleAnswer(index)}
+                  key={idx}
+                  onClick={() => handleAnswer(idx)}
                   className={`w-full ${
-                    selectedAnswer !== null && index === practiceQuestions[current].answer ? 'bg-green-200' : ''
+                    selectedAnswer !== null && idx === practiceQuestions[current].answer ? 'bg-green-200' : ''
                   } ${
-                    selectedAnswer !== null && index === selectedAnswer && index !== practiceQuestions[current].answer
+                    selectedAnswer !== null && idx === selectedAnswer && idx !== practiceQuestions[current].answer
                       ? 'bg-red-200'
                       : ''
                   }`}
                   disabled={selectedAnswer !== null}
                 >
-                  {option}
+                  {opt}
                 </Button>
               ))}
             </div>
@@ -108,5 +96,3 @@ export default function PracticePage() {
     </div>
   )
 }
-
-export { wrongAnswers }

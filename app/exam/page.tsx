@@ -5,8 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { allQuestions, Question } from '@/lib/data/questions'
 import { useRouter } from 'next/navigation'
-
-let wrongAnswers: any[] = []
+import { wrongAnswers } from '@/lib/state'
 
 const getExamQuestions = (): Question[] => {
   const mcqQuestions = allQuestions.filter(q => q.type === 'mcq')
@@ -112,5 +111,3 @@ export default function ExamPage() {
     </div>
   )
 }
-
-export { wrongAnswers }

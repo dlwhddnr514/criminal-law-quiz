@@ -61,7 +61,10 @@ export default function ExamPage() {
     setSubmitted(true)
   }
 
-  const score = answers.reduce((acc, ans, idx) => (ans === questions[idx].answer ? acc + 1 : acc), 0)
+  const score = answers.reduce((acc, ans, idx) => {
+    if (ans === null) return acc
+    return ans === questions[idx].answer ? acc + 1 : acc
+  }, 0)
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-6">
